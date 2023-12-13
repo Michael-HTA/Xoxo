@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+        }
+        .box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #000;
+            transition: background-color 0.3s;
+        }
+        .box:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game"></div>
+    <script>
+        const game = document.querySelector('.game');
+        let boxes = [];
+        let player = 'X';
+
+        const checkForWin = () => {
+            const lines = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            for (let line of lines) {
+                const [a, b, c] = line;
+                if (boxes[a] && boxes[a] === boxes[b] && boxes[a] === boxes[c]) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        const boxClickHandler = (i) => {
+            if (!boxes[i] && !checkForWin()) {
+                boxes[i] = player;
+                game.children[i].textContent = player;
+                player = player === 'X' ? 'O' : 'X';
+            }
+
+            if (checkForWin()){
+                restart()
+            }
+
+            if (boxes.filter(box => box).length === 9 && !checkForWin()) {
+                restart()
+            }
+
+        };
+
+        for (let i = 0; i < 9; i++) {
+            const box = document.createElement('div');
+            box.classList.add('box');
+            // We can't put 'i' as argument to the arrow function cause i value is changing untill the loop
+            // is executed
+            box.addEventListener('click', () => boxClickHandler(i));
+            game.appendChild(box);
+            boxes.push(null);
+        }
+
+        function restart(){
+                const btn = document.createElement('button');
+                btn.textContent = 'Restart';
+                btn.onclick = ()=> location.reload();
+                game.appendChild(btn);
+        }
+
+    </script>
+</body>
+</html>
